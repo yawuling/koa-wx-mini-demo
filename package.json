@@ -1,0 +1,23 @@
+{
+  "name": "koa-upload-server",
+  "version": "1.0.0",
+  "description": "上传服务",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "koa": "^2.13.4",
+    "koa-body": "^4.2.0",
+    "koa-cors": "0.0.16",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "memory-cache": "^0.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

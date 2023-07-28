@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H5 URL Link 跳微信</title>
+  <script>
+    const start = Date.now();
+  </script>
+</head>
+<body>
+  <button id="btn">点击打开(location.href)</button>
+  <button id="btn2">点击打开(a)</button>
+  <button id="btn3">点击打开(iframe)</button>
+  <script>
+    (function() {
+      function formatData(data = {}) {
+        const arr = [];
+        for (let name in data) {
+          arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+        }
+        arr.push('v=' + parseInt(Math.random() * 1000));
+        return arr.join('&');
+      }
+
+      function ajax({
+        url,
+        data,
+        timeout = 10 * 1000,
+        success,
+        error,
+      }) {
+        const xhr = new XMLHttpRequest();
+        const formatedData = formatData(data);
+
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status >= 200 && xhr.status < 300) {
+            let response = '';
+            const type = xhr.getResponseHeader('Content-Type');
+            if (type.indexOf('xml') !== -1 && xhr.responseXML) {
+              response = xhr.responseXML;
+            } else if (type.indexOf('application/json') > -1) {
+              response = JSON.parse(xhr.responseText);
+            } else {
+              response = xhr.responseText;
+            }
+            success && success(response);
+          } else {
+            error && error(xhr);
+          }
+        }
+
+        xhr.open('GET', url + (data ? '?' + data : ''), true);
+        xhr.send();
+      }
+
+      function openByIframe(url) {
+        const ifr = document.createElement('iframe')
+        ifr.src = url
+        ifr.style.display = 'none'
+        document.body.appendChild(ifr);
+      }
+
+      function openByALink(url) {
+        const aLink = document.createElement('a')
+        aLink.setAttribute('href', url)
+        aLink.style.display = 'none'
+        document.body.appendChild(aLink)
+        aLink.click();
+      }
+
+      const localUrl = localStorage.getItem('wx-schema');
+      
+      if (localUrl) {
+        location.href = localUrl;
+      } else {
+        ajax({
+          url: '/api/wx/generateSchema',
+          success: (res) => {
+            if (res.errcode === 0) {
+              // localStorage.setItem('wx-schema', res.url);
+              console.warn('url loaded time: ', Date.now() - start);
+              location.href = res.url;
+
+              document.querySelector('#btn').addEventListener('click', () => {
+                location.href = res.url;
+              });
+              document.querySelector('#btn2').addEventListener('click', () => {
+                openByALink(res.url);
+              });
+              document.querySelector('#btn3').addEventListener('click', () => {
+                openByIframe(res.url);
+              });
+            } else {
+              alert(res.errmsg);
+            }
+          },
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+    .localstorage {
+      margin: 10px;
+      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+    .item {
+      display: flex;
+      font-size: 12px;
+    }
+    .key {
+      width: 80px;
+      padding: 4px;
+      border-top: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+      color: #0083ff;
+      box-sizing: border-box;
+    }
+    .value {
+      width: calc(100% - 80px);
+      padding: 4px;
+      border-top: 1px solid #ccc;
+      border-left: 1px solid #ccc;
+      color: #666;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div class="localstorage"></div>
+  <script>
+    (function() {
+      let storage = new Array(localStorage.length).fill(0).map((_, i) => {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        return `<div class="item"><div class="key">${key}</div><div class="value">${value}</div></div>`;
+      }).join('');
+      document.querySelector('.localstorage').innerHTML = storage;
+    })();
+  </script>
+</body>
+</html>
